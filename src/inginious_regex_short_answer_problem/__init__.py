@@ -169,9 +169,15 @@ class RegexShortAnswerProblem(Problem):
         return Problem.parse_problem(problem_content)
 
     @classmethod
-    def get_text_fields(cls) -> dict[str, bool]:  # noqa: D102
-        fields = Problem.get_text_fields()
-        fields.update({"header": True})
+    def get_text_fields(cls) -> dict[str, Any]:  # noqa: D102
+        fields: dict[str, Any] = Problem.get_text_fields()
+        fields.update(
+            {
+                "header": True,
+                "no_match_message": True,
+                "matches": [{"regex": True, "feedback": True}],
+            },
+        )
         return fields
 
 
