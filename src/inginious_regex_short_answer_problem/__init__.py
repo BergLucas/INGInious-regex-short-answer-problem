@@ -64,8 +64,8 @@ class RegexShortAnswerProblem(Problem):
         self._header = content.get("header", "")
         self._centralize = "centralize" in content
         self._no_match_feedback = (
-            [no_match_message]
-            if (no_match_message := content.get("no_match_message"))
+            [no_match_feedback]
+            if (no_match_feedback := content.get("no_match_feedback"))
             else None
         )
         self._matches: list[dict] = list(content.get("matches", ()))
@@ -148,10 +148,10 @@ class RegexShortAnswerProblem(Problem):
             problem_content["centralize"] = True
 
         if (
-            "no_match_message" in problem_content
-            and problem_content["no_match_message"].strip() == ""
+            "no_match_feedback" in problem_content
+            and problem_content["no_match_feedback"].strip() == ""
         ):
-            del problem_content["no_match_message"]
+            del problem_content["no_match_feedback"]
 
         if "matches" in problem_content:
             problem_content["matches"] = [
@@ -174,7 +174,7 @@ class RegexShortAnswerProblem(Problem):
         fields.update(
             {
                 "header": True,
-                "no_match_message": True,
+                "no_match_feedback": True,
                 "matches": [{"regex": True, "feedback": True}],
             },
         )

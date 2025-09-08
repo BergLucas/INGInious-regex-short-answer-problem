@@ -8,12 +8,12 @@ function studio_init_template_regex_short_answer(well, pid, problem) {
   if ("centralize" in problem && problem["centralize"])
     $("#centralize-" + pid, well).attr("checked", true);
 
-  var no_match_message = "";
-  if ("no_match_message" in problem)
-    no_match_message = problem["no_match_message"];
+  var no_match_feedback = "";
+  if ("no_match_feedback" in problem)
+    no_match_feedback = problem["no_match_feedback"];
 
-  registerCodeEditor($("#no_match_message-" + pid)[0], "rst", 1).setValue(
-    no_match_message
+  registerCodeEditor($("#no_match_feedback-" + pid)[0], "rst", 1).setValue(
+    no_match_feedback
   );
 
   jQuery.each(problem["matches"], function (index, elem) {
