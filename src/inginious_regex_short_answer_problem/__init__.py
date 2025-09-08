@@ -237,7 +237,7 @@ class RegexShortAnswerDisplayableProblem(RegexShortAnswerProblem, DisplayablePro
         return template_helper.render(
             "tasks/regex_short_answer.html",
             template_folder=PATH_TO_TEMPLATES,
-            inputId=self.get_id(),
+            pid=self.get_id(),
             header=header,
         )
 
