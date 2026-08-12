@@ -4,7 +4,7 @@ import os
 import re
 from typing import TYPE_CHECKING, Any
 
-from flask import Response, send_from_directory
+from flask import Response, render_template, send_from_directory
 from inginious.common.tasks_problems import Problem
 from inginious.frontend.pages.utils import INGIniousPage
 from inginious.frontend.parsable_text import ParsableText
@@ -15,16 +15,12 @@ if TYPE_CHECKING:
 
     from inginious.client.client import Client
     from inginious.common.filesystems import FileSystemProvider
-    from inginious.frontend.course_factory import CourseFactory
     from inginious.frontend.plugin_manager import PluginManager
-    from inginious.frontend.task_factory import TaskFactory
-    from inginious.frontend.template_helper import TemplateHelper
 
 
 __version__ = "0.1.0"
 
 PATH_TO_PLUGIN = os.path.abspath(os.path.dirname(__file__))
-PATH_TO_TEMPLATES = os.path.join(PATH_TO_PLUGIN, "templates")
 
 
 class RegexShortAnswerProblemStatic(INGIniousPage):
@@ -215,14 +211,12 @@ class RegexShortAnswerDisplayableProblem(RegexShortAnswerProblem, DisplayablePro
 
     def show_input(  # type: ignore  # noqa: D415
         self,
-        template_helper: TemplateHelper,
         language: str,
         seed: int,
     ) -> str:
         """Show a RegexShortAnswerDisplayableProblem.
 
         Args:
-            template_helper: The template helper instance.
             language: The language code.
             seed: The random seed.
 
@@ -232,11 +226,9 @@ class RegexShortAnswerDisplayableProblem(RegexShortAnswerProblem, DisplayablePro
         header = ParsableText(
             self.gettext(language, self._header),
             "rst",
-            translation=self.get_translation_obj(language),
         )
-        return template_helper.render(
-            "tasks/regex_short_answer.html",
-            template_folder=PATH_TO_TEMPLATES,
+        return render_template(
+            "inginious_regex_short_answer_problem/templates/tasks/regex_short_answer.html",
             pid=self.get_id(),
             header=header,
         )
@@ -244,53 +236,46 @@ class RegexShortAnswerDisplayableProblem(RegexShortAnswerProblem, DisplayablePro
     @classmethod
     def show_editbox(  # type: ignore
         cls,
-        template_helper: TemplateHelper,
         key: str,
         language: str,
     ) -> str:
         """Show the edit box for a RegexShortAnswerDisplayableProblem.
 
         Args:
-            template_helper: The template helper instance.
             key: The problem key.
             language: The language code.
 
         Returns:
             The rendered edit box HTML.
         """
-        return template_helper.render(
-            "course_admin/subproblems/regex_short_answer.html",
-            template_folder=PATH_TO_TEMPLATES,
+        return render_template(
+            "inginious_regex_short_answer_problem/templates/course_admin/subproblems/regex_short_answer.html",
             key=key,
         )
 
     @classmethod
     def show_editbox_templates(  # type: ignore
         cls,
-        template_helper: TemplateHelper,
         key: str,
         language: str,
     ) -> str:
         """Show the edit box templates for a RegexShortAnswerDisplayableProblem.
 
         Args:
-            template_helper: The template helper instance.
             key: The problem key.
             language: The language code.
 
         Returns:
             The rendered edit box templates HTML.
         """
-        return template_helper.render(
-            "course_admin/subproblems/regex_short_answer_templates.html",
-            template_folder=PATH_TO_TEMPLATES,
+        return render_template(
+            "inginious_regex_short_answer_problem/templates/course_admin/subproblems/regex_short_answer_templates.html",
             key=key,
         )
 
 
 def init(
     plugin_manager: PluginManager,
-    course_factory: CourseFactory,
     client: Client,
     plugin_config: dict[str, Any],
 ) -> None:
@@ -298,7 +283,6 @@ def init(
 
     Args:
         plugin_manager: The plugin manager instance.
-        course_factory: The course factory instance.
         client: The client instance.
         plugin_config: The plugin configuration dictionary.
     """
@@ -314,5 +298,6 @@ def init(
         "javascript_header",
         lambda: "/plugins/regex_short_answer/static/js/task.js",
     )
-    task_factory: TaskFactory = course_factory.get_task_factory()
-    task_factory.add_problem_type(RegexShortAnswerDisplayableProblem)
+    plugin_manager.add_template_prefix(
+        "inginious_regex_short_answer_problem", PATH_TO_PLUGIN
+    )
